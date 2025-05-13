@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Designation Master</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body style="background-color: #f8f9fa;">
+<div class="container mt-5 p-4 bg-white rounded shadow">
+
+    <h2 class="text-primary mb-4">Add New Designation</h2>
+
+    <form th:action="@{/designations/save}" th:object="${designationType}" method="post" class="row g-3">
+        <input type="hidden" th:field="*{id}" />
+        <div class="col-md-8">
+            <input type="text" th:field="*{name}" class="form-control" placeholder="Enter designation name" required />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Save</button>
+        </div>
+    </form>
+
+    <hr class="my-4" />
+
+    <h4 class="text-secondary mb-3">All Designations</h4>
+    <table class="table table-bordered table-hover mt-2">
+        <thead class="table-primary">
+        <tr>
+            <th>ID</th>
+            <th>Designation Name</th>
+            <th style="width: 20%">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="designation : ${designationList}">
+            <td th:text="${designation.id}"></td>
+            <td th:text="${designation.name}"></td>
+            <td>
+                <a th:href="@{/designations/edit/{id}(id=${designation.id})}" class="btn btn-sm btn-warning me-2">Edit</a>
+                <a th:href="@{/designations/delete/{id}(id=${designation.id})}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Are you sure to delete?')">Delete</a>
+            </td>
+        </tr>
+        <tr th:if="${designationList.isEmpty()}">
+            <td colspan="3" class="text-center">No designations added yet.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

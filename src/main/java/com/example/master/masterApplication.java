@@ -13,3 +13,4 @@ public class masterApplication {
 }
 //EndPoint for Leaves Master => http://localhost:8080/leaves
 //EndPoint for User Master => http://localhost:8080/usertypes
+//EndPoint for Designation Master => http://localhost:8080/designations
