@@ -2,6 +2,8 @@ package com.example.master.entity;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 public class UserType {
 
@@ -19,6 +21,11 @@ public class UserType {
     }
 
     // Getters and Setters
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

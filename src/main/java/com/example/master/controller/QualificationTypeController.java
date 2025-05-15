@@ -3,36 +3,46 @@ package com.example.master.controller;
 import com.example.master.entity.QualificationType;
 import com.example.master.service.QualificationTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/qualifications")
-@CrossOrigin(origins = "http://localhost:3000")  // Allow React frontend to access this
+@Controller
+@RequestMapping("/qualifications")
 public class QualificationTypeController {
 
     @Autowired
     private QualificationTypeService service;
 
+    // Display the qualification form and list
     @GetMapping
-    public List<QualificationType> getAllQualifications() {
-        return service.getAllQualifications();
+    public String viewQualifications(Model model) {
+        model.addAttribute("qualification", new QualificationType());
+        model.addAttribute("qualificationList", service.getAllQualifications());
+        return "Qualification_Master"; // Must match the actual HTML file name (without .html)
     }
 
-    @PostMapping
-    public QualificationType addQualification(@RequestBody QualificationType qualification) {
-        return service.saveQualification(qualification);
+    // Save or update a qualification
+    @PostMapping("/save")
+    public String saveQualification(@ModelAttribute("qualification") QualificationType qualification) {
+        service.saveQualification(qualification);
+        return "redirect:/qualifications";
     }
 
-    @PutMapping("/{id}")
-    public QualificationType updateQualification(@PathVariable Long id, @RequestBody QualificationType updatedQualification) {
-        updatedQualification.setId(id);
-        return service.saveQualification(updatedQualification);
+    // Load qualification into form for editing
+    @GetMapping("/edit/{id}")
+    public String editQualification(@PathVariable Long id, Model model) {
+        QualificationType qualification = service.getQualificationById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid qualification ID: " + id));
+        model.addAttribute("qualification", qualification);
+        model.addAttribute("qualificationList", service.getAllQualifications());
+        return "Qualification_Master";
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteQualification(@PathVariable Long id) {
+    // Delete a qualification
+    @GetMapping("/delete/{id}")
+    public String deleteQualification(@PathVariable Long id) {
         service.deleteQualification(id);
+        return "redirect:/qualifications";
     }
 }
