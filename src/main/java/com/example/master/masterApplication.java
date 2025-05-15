@@ -15,3 +15,4 @@ public class masterApplication {
 //EndPoint for User Master => http://localhost:8080/usertypes
 //EndPoint for Designation Master => http://localhost:8080/designations
 //EndPoint for Qualification Master =>http://localhost:8080/qualifications
+//EndPoint for University Master =>http://localhost:8080/university

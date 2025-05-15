@@ -18,9 +18,9 @@ public class UniversityTypeController {
 
     @GetMapping
     public String showUniversityPage(Model model) {
-        model.addAttribute("UniversityType", new UniversityType());
-        model.addAttribute("UniversityList", service.getAllUniversity());
-        return "University_Master";
+        model.addAttribute("universityType", new UniversityType()); // ✅ This must match HTML
+        model.addAttribute("universityList", service.getAllUniversity());
+        return "University_Master"; // ✅ Match filename and casing
     }
 
     @PostMapping("/save")
@@ -31,15 +31,17 @@ public class UniversityTypeController {
 
     @GetMapping("/edit/{id}")
     public String editUniversity(@PathVariable Long id, Model model) {
-        UniversityType universityType = service.findById(id).orElseThrow();
+        UniversityType universityType = service.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid university ID: " + id)
+        );
         model.addAttribute("universityType", universityType);
         model.addAttribute("universityList", service.getAllUniversity());
-        return "university_master";
+        return "University_Master";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteUniversity(@PathVariable Long id) {
         service.deleteById(id);
-        return "redirect:university";
+        return "redirect:/university";
     }
 }
