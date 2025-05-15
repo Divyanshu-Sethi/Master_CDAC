@@ -1,0 +1,7 @@
+package com.example.master.repository;
+
+import com.example.master.entity.UniversityType;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UniversityTypeRepository extends JpaRepository<UniversityType, Long> {
+}
