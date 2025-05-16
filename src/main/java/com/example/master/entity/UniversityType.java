@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 
 
 @Entity
-public class UniversityType {
+public class UniversityType extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

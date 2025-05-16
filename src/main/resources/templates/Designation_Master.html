@@ -10,7 +10,7 @@
     <h2 class="text-primary mb-4">Add New Designation</h2>
 
     <form th:action="@{/designations/save}" th:object="${designationType}" method="post" class="row g-3">
-<!--        <input type="hidden" th:field="*{id}" />-->
+        <input type="hidden" th:field="*{id}" />
         <div class="col-md-8">
             <input type="text" th:field="*{name}" class="form-control" placeholder="Enter designation name" required />
         </div>

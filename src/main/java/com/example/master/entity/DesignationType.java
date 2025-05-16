@@ -3,7 +3,7 @@ package com.example.master.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class DesignationType {
+public class DesignationType extends Auditable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

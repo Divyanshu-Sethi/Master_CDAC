@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class QualificationType {
+public class QualificationType extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
