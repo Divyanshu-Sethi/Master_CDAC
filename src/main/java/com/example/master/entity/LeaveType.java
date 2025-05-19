@@ -14,12 +14,12 @@ public class LeaveType extends Auditable {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Getters & Setters
+
     public void setId(Long id) {
         this.id = id;
     }
+    public Long getId() { return id; }
     public String getName() {
         return name;
     }

@@ -19,12 +19,12 @@ public class DesignationTypeService {
         return repository.findAll();
     }
 
-    public Optional<DesignationType> findById(Long id) {
-        return repository.findById(id);
-    }
-
     public void save(DesignationType designationType) {
         repository.save(designationType);
+    }
+
+    public Optional<DesignationType> findById(Long id) {
+        return repository.findById(id);
     }
 
     public void deleteById(Long id) {

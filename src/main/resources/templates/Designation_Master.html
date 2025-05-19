@@ -21,12 +21,16 @@
 
     <hr class="my-4" />
 
-    <h4 class="text-secondary mb-3">All Designations</h4>
+    <h4 class="text-secondary mb-3">All Designations Types</h4>
     <table class="table table-bordered table-hover mt-2">
         <thead class="table-primary">
         <tr>
             <th>ID</th>
             <th>Designation Name</th>
+            <th>Created By</th>
+            <th>Created At</th>
+            <th>Updated By</th>
+            <th>Updated At</th>
             <th style="width: 20%">Actions</th>
         </tr>
         </thead>
@@ -34,14 +38,18 @@
         <tr th:each="designation : ${designationList}">
             <td th:text="${designation.id}"></td>
             <td th:text="${designation.name}"></td>
-            <td>
+            <td th:text="${designation.createdBy}"></td>
+            <td th:text="${#temporals.format(designation.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${designation.updatedBy}"></td>
+            <td th:text="${#temporals.format(designation.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+             <td>
                 <a th:href="@{/designations/edit/{id}(id=${designation.id})}" class="btn btn-sm btn-warning me-2">Edit</a>
                 <a th:href="@{/designations/delete/{id}(id=${designation.id})}" class="btn btn-sm btn-danger"
                    onclick="return confirm('Are you sure to delete?')">Delete</a>
             </td>
         </tr>
         <tr th:if="${designationList.isEmpty()}">
-            <td colspan="3" class="text-center">No designations added yet.</td>
+            <td colspan="7" class="text-center">No designations added yet.</td>
         </tr>
         </tbody>
     </table>

@@ -6,10 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+
 
 @Controller
-@RequestMapping("/usertypes")
+@RequestMapping("/usertype")
 public class UserTypeController {
 
     private final UserTypeService service;
@@ -28,7 +28,7 @@ public class UserTypeController {
     @PostMapping("/save")
     public String saveUserType(@ModelAttribute UserType userType) {
         service.save(userType);
-        return "redirect:/usertypes";
+        return "redirect:/usertype";
     }
 
     @GetMapping("/edit/{id}")
@@ -42,6 +42,6 @@ public class UserTypeController {
     @GetMapping("/delete/{id}")
     public String deleteUserType(@PathVariable Long id) {
         service.deleteById(id);
-        return "redirect:/usertypes";
+        return "redirect:/usertype";
     }
 }

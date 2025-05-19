@@ -1,4 +1,3 @@
-
 package com.example.master.controller;
 
 import com.example.master.entity.LeaveType;

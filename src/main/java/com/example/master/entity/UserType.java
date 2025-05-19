@@ -9,31 +9,30 @@ public class UserType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type; // e.g., Permanent, Contractual
+    @Column(nullable = false, unique = true)
+    private String name;
 
     public UserType() {
     }
 
-    public UserType(String type) {
-        this.type = type;
-    }
-
-    // Getters and Setters
-
-    public void setId(Long id) {
-        this.id = id;
+    public UserType(String name) {
+        this.name = name;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getType() {
-        return type;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 
