@@ -19,9 +19,10 @@ public class UniversityTypeService {
 
     public Optional<UniversityType> findById(Long id) { return repository.findById(id); }
 
-    public void save(UniversityType universityType){
-        repository.save(universityType);
-    }
+    public void save(UniversityType universityType) { repository.save(universityType); }
 
     public void deleteById(Long id){ repository.deleteById(id); }
+
+    public boolean isDuplicateName(String name) { return repository.findByNameIgnoreCase(name).isPresent(); }
+
 }
