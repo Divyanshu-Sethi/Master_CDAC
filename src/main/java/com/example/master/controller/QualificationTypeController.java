@@ -2,9 +2,11 @@ package com.example.master.controller;
 
 import com.example.master.entity.QualificationType;
 import com.example.master.service.QualificationTypeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -14,22 +16,28 @@ public class QualificationTypeController {
     @Autowired
     private QualificationTypeService service;
 
-    // Display the qualification form and list
+    public QualificationTypeController(QualificationTypeService service) { this.service = service; }
+
     @GetMapping
     public String viewQualifications(Model model) {
         model.addAttribute("qualification", new QualificationType());
         model.addAttribute("qualificationList", service.getAllQualifications());
-        return "Qualification_Master"; // Must match the actual HTML file name (without .html)
+        return "Qualification_Master";
     }
 
-    // Save or update a qualification
     @PostMapping("/save")
-    public String saveQualification(@ModelAttribute("qualification") QualificationType qualification) {
+    public String saveQualification(@Valid @ModelAttribute QualificationType qualification, BindingResult bindingResult, Model model) {
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("qualificationList", service.getAllQualifications());
+            return "Qualification_Master";
+        }
+
+        //duplicate check...
         service.saveQualification(qualification);
         return "redirect:/qualifications";
     }
 
-    // Load qualification into form for editing
     @GetMapping("/edit/{id}")
     public String editQualification(@PathVariable Long id, Model model) {
         QualificationType qualification = service.getQualificationById(id)
@@ -39,7 +47,6 @@ public class QualificationTypeController {
         return "Qualification_Master";
     }
 
-    // Delete a qualification
     @GetMapping("/delete/{id}")
     public String deleteQualification(@PathVariable Long id) {
         service.deleteQualification(id);
