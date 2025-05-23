@@ -1,12 +1,12 @@
 package com.example.master.controller;
 
 import com.example.master.entity.QualificationType;
+
 import com.example.master.exception.DuplicateEntryException;
 import com.example.master.service.QualificationTypeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,57 +14,78 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/qualifications")
 public class QualificationTypeController {
 
-    @Autowired
     private final QualificationTypeService service;
 
+    @Autowired
     public QualificationTypeController(QualificationTypeService service) {
         this.service = service;
     }
 
-    @GetMapping
+    //View Controller for Thymeleaf
+    @GetMapping("/qualification-type")
     public String viewQualifications(Model model) {
         model.addAttribute("qualification", new QualificationType());
-        model.addAttribute("qualificationList", service.getAllQualifications());
         return "Qualification_Master";
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<?> saveQualificationAjax(@Valid @ModelAttribute QualificationType qualification,
-                                                   BindingResult bindingResult) {
+    //GET all Qualification Types
+    @GetMapping("/qualification")
+    @ResponseBody
+    public ResponseEntity<List<QualificationType>> getAll() {
+        return ResponseEntity.ok(service.getAllQualifications());
+    }
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getFieldErrors());
+
+    //GET a specific qualification type by ID
+    @GetMapping("/qualification/{id}")
+    @ResponseBody
+    public ResponseEntity<QualificationType> getById(@PathVariable Long id) {
+        return service.getQualificationById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //CREATE a qualification type
+    @PostMapping("/qualification")
+    @ResponseBody
+    public ResponseEntity<?> create(@Valid @RequestBody QualificationType qualificationType,
+                                                   BindingResult result) {
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
         }
-
         try {
-            QualificationType saved = service.save(qualification);
-            return ResponseEntity.ok(saved);
+            QualificationType saved = service.save(qualificationType);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (DuplicateEntryException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    @GetMapping("/edit/{id}")
-    public String editQualification(@PathVariable Long id, Model model) {
-        QualificationType qualification = service.getQualificationById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid qualification ID: " + id));
-        model.addAttribute("qualification", qualification);
-        model.addAttribute("qualificationList", service.getAllQualifications());
-        return "Qualification_Master";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deleteQualification(@PathVariable Long id) {
-        service.deleteQualification(id);
-        return "redirect:/qualifications";
-    }
-
-    @GetMapping("/list")
+    //UPDATE a qualification type
+    @PutMapping("/qualification/{id}")
     @ResponseBody
-    public List<QualificationType> getQualification() {
-        return  service.getAllQualifications();
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @Valid @RequestBody QualificationType qualificationType,
+                                    BindingResult result) {
+        if(result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
+        }
+        try{
+            qualificationType.setId(id);
+            QualificationType updated = service.save(qualificationType);
+            return ResponseEntity.ok(updated);
+        }catch(DuplicateEntryException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    //DELETE a qualification type
+    @DeleteMapping("/qualification/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.deleteQualification(id);
+        return ResponseEntity.noContent().build();
     }
 }

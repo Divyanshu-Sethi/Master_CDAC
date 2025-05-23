@@ -3,14 +3,15 @@ package com.example.master.service;
 import com.example.master.entity.UserType;
 import com.example.master.exception.DuplicateEntryException;
 import com.example.master.repository.UserTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class UserTypeService {
 
+    @Autowired
     private final UserTypeRepository repository;
 
     public UserTypeService(UserTypeRepository repository) {
@@ -28,10 +29,8 @@ public class UserTypeService {
     public UserType save(UserType userType) throws DuplicateEntryException {
         boolean exists;
         if (userType.getId() == null) {
-            // New record: check if exact name exists
             exists = repository.findByName(userType.getName()).isPresent();
         } else {
-            // Editing existing record, check if name exists on other records
             exists = repository.findByName(userType.getName())
                     .filter(u -> !u.getId().equals(userType.getId()))
                     .isPresent();

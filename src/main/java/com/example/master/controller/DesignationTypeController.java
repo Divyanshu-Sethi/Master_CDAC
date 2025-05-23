@@ -4,8 +4,8 @@ import com.example.master.entity.DesignationType;
 import com.example.master.exception.DuplicateEntryException;
 import com.example.master.service.DesignationTypeService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,60 +13,78 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/designations")
 public class DesignationTypeController {
 
     private final DesignationTypeService service;
 
+    @Autowired
     public DesignationTypeController(DesignationTypeService service) {
         this.service = service;
     }
 
-    @GetMapping
+    //View Controller for Thymeleaf
+    @GetMapping("/designation-type")
     public String showDesignationPage(Model model) {
         model.addAttribute("designationType", new DesignationType());
-        model.addAttribute("designationList", service.getAllDesignations());
-        return "designation_master"; // your Thymeleaf page
+        return "Designation_master";
     }
 
-    // AJAX save (create or update)
-    @PostMapping("/save")
+    //GET All Designation type
+    @GetMapping("/designation")
     @ResponseBody
-    public ResponseEntity<?> saveDesignationAjax(@Valid @ModelAttribute DesignationType designationType,
-                                                 BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getFieldErrors());
+    public ResponseEntity<List<DesignationType>> getAll() {
+        return ResponseEntity.ok(service.getAllDesignations());
+    }
+
+
+    //GET a specific Designation type by ID
+    @GetMapping("/designation/{id}")
+    @ResponseBody
+    public ResponseEntity<DesignationType> getById(@PathVariable Long id) {
+        return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // CREATE a designation type
+    @PostMapping("/designation")
+    @ResponseBody
+    public ResponseEntity<?> create(@Valid @RequestBody DesignationType designationType,
+                                    BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
         }
         try {
-            DesignationType savedDesignation = service.save(designationType);
-            return ResponseEntity.ok(savedDesignation); // return saved entity as JSON
+            DesignationType saved = service.save(designationType);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (DuplicateEntryException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    // AJAX-friendly edit form load
-    @GetMapping("/edit/{id}")
-    public String editDesignation(@PathVariable Long id, Model model) {
-        DesignationType designationType = service.findById(id).orElseThrow(() ->
-                        new IllegalArgumentException("Invalid designation ID: " + id)
-                );
-        model.addAttribute("designationType", designationType);
-        model.addAttribute("designationList", service.getAllDesignations());
-        return "designation_master";
-    }
-
-    // Standard delete + redirect
-    @GetMapping("/delete/{id}")
-    public String deleteDesignation(@PathVariable Long id) {
-        service.deleteById(id);
-        return "redirect:/designations";
-    }
-
-    // Get updated list via AJAX
-    @GetMapping("/list")
+    // UPDATE a Designation Type
+    @PutMapping("/designation/{id}")
     @ResponseBody
-    public List<DesignationType> getDesignationList() {
-        return service.getAllDesignations();
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @Valid @RequestBody DesignationType designationType,
+                                    BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
+        }
+        try {
+            designationType.setId(id);
+            DesignationType updated = service.save(designationType);
+            return ResponseEntity.ok(updated);
+        } catch (DuplicateEntryException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    //DELETE a designation Type
+    @DeleteMapping("/designation/{id}")
+    @ResponseBody
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
+
+

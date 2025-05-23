@@ -31,11 +31,9 @@ public class UniversityTypeService {
                     .filter(u -> !u.getId().equals(universityType.getId()))
                     .isPresent();
         }
-
         if (exists) {
             throw new DuplicateEntryException("University Type name already exists: " + universityType.getName());
         }
-
         return repository.save(universityType);
     }
 

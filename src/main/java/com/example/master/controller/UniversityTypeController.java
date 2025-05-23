@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
@@ -54,7 +53,6 @@ public class UniversityTypeController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getFieldErrors());
         }
-
         try {
             UniversityType saved = service.save(universityType);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -72,7 +70,6 @@ public class UniversityTypeController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getFieldErrors());
         }
-
         try {
             universityType.setId(id);
             UniversityType updated = service.save(universityType);
