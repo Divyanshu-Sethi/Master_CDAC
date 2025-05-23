@@ -5,66 +5,88 @@ import com.example.master.exception.DuplicateEntryException;
 import com.example.master.service.UniversityTypeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @Controller
-@RequestMapping("/university")
 public class UniversityTypeController {
 
-    @Autowired
     private final UniversityTypeService service;
 
+    @Autowired
     public UniversityTypeController(UniversityTypeService service) {
         this.service = service;
     }
 
-    @GetMapping
-    public String showUniversityPage(Model model) {
+    // View Controller for Thymeleaf
+    @GetMapping("/university-type")
+    public String universityTypePage(Model model) {
         model.addAttribute("universityType", new UniversityType());
-        model.addAttribute("universityList", service.getAllUniversityTypes());
         return "University_Master";
     }
 
-    @PostMapping("/save")
+    // GET all university types
+    @GetMapping("/university")
     @ResponseBody
-    public ResponseEntity<?> saveUniversityAjax(@Valid @ModelAttribute UniversityType universityType,
-                                                BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getFieldErrors());
+    public ResponseEntity<List<UniversityType>> getAll() {
+        return ResponseEntity.ok(service.getAllUniversityTypes());
+    }
+
+    // GET a specific university type by ID
+    @GetMapping("/university/{id}")
+    @ResponseBody
+    public ResponseEntity<UniversityType> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // CREATE a university type
+    @PostMapping("/university")
+    @ResponseBody
+    public ResponseEntity<?> create(@Valid @RequestBody UniversityType universityType,
+                                    BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
         }
 
         try {
             UniversityType saved = service.save(universityType);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (DuplicateEntryException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUniversity(@PathVariable Long id, Model model) {
-        UniversityType universityType = service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid university ID: " + id));
-        model.addAttribute("universityType", universityType);
-        model.addAttribute("universityList", service.getAllUniversityTypes());
-        return "University_Master";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deleteUniversity(@PathVariable Long id) {
-        service.deleteById(id);
-        return "redirect:/university";
-    }
-
-    @GetMapping("/list")
+    // UPDATE a university type
+    @PutMapping("/university/{id}")
     @ResponseBody
-    public List<UniversityType> getUniversityList() {
-        return service.getAllUniversityTypes();
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @Valid @RequestBody UniversityType universityType,
+                                    BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
+        }
+
+        try {
+            universityType.setId(id);
+            UniversityType updated = service.save(universityType);
+            return ResponseEntity.ok(updated);
+        } catch (DuplicateEntryException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    // DELETE a university type
+    @DeleteMapping("/university/{id}")
+    @ResponseBody
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
