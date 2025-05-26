@@ -21,7 +21,7 @@ public class UserTypeController {
     @Autowired
     public UserTypeController(UserTypeService service) { this.service = service; }
 
-    // View Controller for ThymeLEaf
+    // View Controller for ThymeLeaf
     @GetMapping("/user-type")
     public String showUserTypePage(Model model) {
         model.addAttribute("userType", new UserType());
