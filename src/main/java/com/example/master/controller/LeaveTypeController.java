@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:5173")
 public class LeaveTypeController {
 
     private final LeaveTypeService service;

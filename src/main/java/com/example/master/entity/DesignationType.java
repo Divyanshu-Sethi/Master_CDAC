@@ -8,7 +8,7 @@ public class DesignationType extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "University name cannot be empty")
+    @NotBlank(message = "Designation name cannot be empty")
     @Column(nullable = false, unique = true)
     private String name;
 
